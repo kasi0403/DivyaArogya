@@ -1,0 +1,21 @@
+# Node modules  
+node_modules/  
+
+# Build directory  
+dist/  
+build/  
+
+# Environment variables  
+.env  
+.env.local  
+
+# Logs  
+npm-debug.log*  
+yarn-debug.log*  
+yarn-error.log*  
+
+# Cache  
+.cache/  
+.vite/  
+.next/  
+out/  
