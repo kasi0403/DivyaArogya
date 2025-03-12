@@ -6,8 +6,8 @@ const navigation = [
   { name: 'Home', href: '/', visibleTo: ['doctor', 'Care Taker'] },
   { name: 'LogIn', href: '/Login', visibleTo: ['guest'] },
   { name: 'Reports', href: '/Reports', visibleTo: ['doctor', 'Care Taker'] },
-  { name: 'Admin', href: '/Admin', visibleTo: ['admin'] },
-  { name: 'Logout', href: '#', visibleTo: ['doctor', 'Care Taker', 'admin'] },
+  { name: 'Admin', href: '/Admin', visibleTo: ['Admin'] },
+  { name: 'Logout', href: '#', visibleTo: ['doctor', 'Care Taker', 'Admin'] },
 ];
 
 function classNames(...classes) {

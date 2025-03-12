@@ -23,7 +23,7 @@ let userSchema = new mongoose.Schema({
 
 let usersModel = mongoose.model('User', userSchema);
 
-let patientIdSchema = new mongoose.Schema({
+const patientSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: true,
@@ -33,22 +33,68 @@ let patientIdSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  age:{
+  age: {
     type: Number,
     required: true,
+  },
+  gender: {
+    type: String,
+    required: true,
+  },
+  bloodType: { // Changed from bloodGroup to match React component
+    type: String,
+    required: true,
+  },
+  medicalHistory: {
+    type: String
+  },
+  caretakerId: {
+    type: String,
+    required: true,
+  },
+  // Adding additional fields needed for the dashboard
+  vitals: [{
+    date: String,
+    bloodPressure: String,
+    sugarLevel: String
+  }],
+  reports: [String],
+  doctorNotes: String,
+  medications: [String],
+  appointments: [{
+    date: String,
+    doctor: String
+  }]
+});
+
+
+let doctorIdSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  name: {
+    type: String,
+    required: true
   },
   gender:{
     type: String,
     required: true,
   },
-  caretakerId:{
+  specialization:{
     type: String,
     required: true,
   },
- 
+  phone:{
+    type:String,
+    required:true
+  }
 });
 
-let patientIdModel = mongoose.model('patientId', patientIdSchema);
+
+let patientIdModel = mongoose.model('patientId', patientSchema);
+let doctorIdModel = mongoose.model('doctorId', doctorIdSchema);
 
 let reportIdSchema = new mongoose.Schema({
   userId: { type: String, required: true },  
@@ -124,4 +170,5 @@ module.exports = {
   reportDatasModel,
   careIDsModel,
   predictionsModel,
+  doctorIdModel
 };

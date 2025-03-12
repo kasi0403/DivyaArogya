@@ -130,10 +130,10 @@ const Admin = () => {
   };
 
   return (
-    <div className="mt-20 flex items-center justify-center w-full h-screen relative overflow-hidden">
+    <div className="mt-20 flex items-center justify-center relative overflow-hidden">
       <div className="relative z-2">
-        <div className=" bg-opacity-80 p-8 rounded-lg shadow-md" style={{ background: 'rgba(136, 210, 216, 0.5)', top: '20%' }}>
-          <h2 className="text-2xl mb-4 text-center">
+        <div className=" p-6 rounded-lg shadow-md" style={{ background: 'rgba(0, 0, 0,0.5)'}}>
+          <h2 className="text-3xl font-extrabold text-white mb-4 text-center">
             {registerType === 'patient' 
               ? 'Patient Registration' 
               : registerType === 'care' 
@@ -142,19 +142,19 @@ const Admin = () => {
           </h2>
           <div className="flex justify-center mb-4 flex-wrap">
             <button
-              className={`mx-2 my-1 py-2 px-4 rounded ${registerType === 'patient' ? 'bg-black text-white' : 'bg-gray-200'}`}
+              className={`font-medium mx-2 my-1 py-2 px-4 rounded ${registerType === 'patient' ? 'bg-black text-white' : 'bg-gray-200'}`}
               onClick={() => setRegisterType('patient')}
             >
               Register Patient
             </button>
             <button
-              className={`mx-2 my-1 py-2 px-4 rounded ${registerType === 'care' ? 'bg-black text-white' : 'bg-gray-300'}`}
+              className={`font-medium mx-2 my-1 py-2 px-4 rounded ${registerType === 'care' ? 'bg-black text-white' : 'bg-gray-300'}`}
               onClick={() => setRegisterType('care')}
             >
               Register Caregiver
             </button>
             <button
-              className={`mx-2 my-1 py-2 px-4 rounded ${registerType === 'doctor' ? 'bg-black text-white' : 'bg-gray-300'}`}
+              className={`font-medium mx-2 my-1 py-2 px-4 rounded ${registerType === 'doctor' ? 'bg-black text-white' : 'bg-gray-300'}`}
               onClick={() => setRegisterType('doctor')}
             >
               Register Doctor

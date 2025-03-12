@@ -4,22 +4,6 @@ const allroutes = express.Router();
 const multer = require("multer");
 const upload = multer();
 
-// Function to generate a unique user ID
-const generateUniqueUserId = async () => {
-  let unique = false;
-  let userId;
-
-  while (!unique) {
-    userId = Math.floor(1000 + Math.random() * 9000).toString();
-    let existingUser = await patientIdModel.findOne({ userId });
-    if (!existingUser) {
-      unique = true;
-    }
-  }
-
-  return userId;
-};
-
 // Root endpoint
 allroutes.get('/', (req, res) => {
   console.log("Reached root");
@@ -71,6 +55,22 @@ allroutes.get('/userIds', async (req, res) => {
   } catch (error) {
     console.error('Error fetching userIds:', error);
     res.status(500).send('Internal Server Error: Failed to fetch userIds');
+  }
+});
+
+allroutes.post('/send-notification', async (req, res) => {
+  const { message } = req.body;
+
+  if (!message) {
+      return res.status(400).json({ error: 'message is required' });
+  }
+
+  try {
+      await sendNotification(message);
+      res.json({ success: true, message: 'Notification sent successfully' });
+  } catch (error) {
+      console.error('Error sending notification:', error);
+      res.status(500).json({ error: 'Failed to send notification' });
   }
 });
 
@@ -144,6 +144,69 @@ allroutes.post('/updateDietPlan', async (req, res) => {
   } catch (error) {
     console.error('Error updating diet plan:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+allroutes.get('/patients/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const patient = await patientIdModel.findOne({ userId });
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    res.json(patient);
+  } catch (error) {
+    console.error('Error fetching patient data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Update doctor's notes
+allroutes.put("/patient/:id/notes", async (req, res) => {
+  try {
+    const updatedPatient = await patientIdModel.findByIdAndUpdate(
+      req.params.id,
+      { doctorsNotes: req.body.notes },
+      { new: true }
+    );
+    res.json(updatedPatient);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Add a medication reminder
+allroutes.post("/patient/:id/medications", async (req, res) => {
+  try {
+    const patient = await patientIdModel.findById(req.params.id);
+    patient.medications.push(req.body);
+    await patient.save();
+    res.json(patient);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete a medication reminder
+allroutes.delete("/patient/:id/medications/:medId", async (req, res) => {
+  try {
+    const patient = await patientIdModel.findById(req.params.id);
+    patient.medications = patient.medications.filter((med) => med._id != req.params.medId);
+    await patient.save();
+    res.json(patient);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get appointments
+allroutes.get("/patient/:id/appointments", async (req, res) => {
+  try {
+    const patient = await patientIdModel.findById(req.params.id);
+    res.json(patient.appointments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -247,22 +310,26 @@ allroutes.post('/signup', upload.none(), async (req, res) => {
 // Endpoint to log in a user
 allroutes.post('/login', upload.none(), async (req, res) => {
   try {
-    console.log(req.body);
-    let user = await usersModel.findOne({ username: req.body.username });
+    console.log("Received login data:", req.body);
+
+    let user = await usersModel.findOne({ username: req.body.username.toLowerCase() });
 
     if (!user) {
       return res.status(400).send('Invalid username or password');
     }
 
-    if (user.password !== req.body.password) {
+    console.log("User found:", user);
+
+    if (user.password.trim() !== req.body.password.trim()) {
       return res.status(400).send('Incorrect password');
     }
 
     res.send({ success: true, user });
   } catch (err) {
-    console.log(err);
+    console.log("Error:", err);
     res.status(500).send(err);
   }
 });
+
 
 module.exports = allroutes;

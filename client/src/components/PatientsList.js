@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const PatientList = () => {
+const PatientList = ({ setUserID }) => {
   const [patients, setPatients] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatients = async () => {
@@ -17,6 +18,11 @@ const PatientList = () => {
 
     fetchPatients();
   }, []);
+
+  const handleView = (id) => {
+    navigate(`/dashboard/${id}`); // Redirecting to Dashboard with userId in the URL
+  };
+  
 
   return (
     <div className="min-h-screen mt-20 flex flex-col items-center py-6">
@@ -37,9 +43,13 @@ const PatientList = () => {
                   <td className="px-6 py-4 whitespace-nowrap">{patient.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{patient.userId}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/dashboard/${patient.userId}`} className=" text-white font-normal py-2 px-4 rounded inline-block" style={{background:'black',color:'white'}}>
+                    <button
+                      onClick={() => handleView(patient.userId)}
+                      className="text-white font-normal py-2 px-4 rounded inline-block"
+                      style={{ background: 'black', color: 'white' }}
+                    >
                       View
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))}

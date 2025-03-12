@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import LoadingPopup from './LoadingPopup';
+import MedicalLoadingComponent from './MedicalLoadingComponent';
+import axios from "axios"
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
   // Hardcoded patient data
   const patient = {
-    name: 'John Smith',
+    name: 'Jane Smith',
     gender: 'Male',
     age: '45',
-    bloodType: 'O+',
-    doctor: 'Dr. David',
+    bloodType: 'O+'
   };
 
   // Initial hardcoded vitals data
@@ -41,9 +41,9 @@ const PatientDashboard = () => {
 
   // Previous reports data
   const [reports, setReports] = useState([
-    { id: 1, name: 'Annual Check-up Report', date: '2025-01-15', type: 'PDF' },
-    { id: 2, name: 'Blood Work Analysis', date: '2025-02-01', type: 'PDF' },
-    { id: 3, name: 'Cardiology Evaluation', date: '2025-03-01', type: 'DOCX' }
+    // { id: 1, name: 'Annual Check-up Report', date: '2025-01-15', type: 'PDF' },
+    // { id: 2, name: 'Blood Work Analysis', date: '2025-02-01', type: 'PDF' },
+    // { id: 3, name: 'Cardiology Evaluation', date: '2025-03-01', type: 'DOCX' }
   ]);
 
   // Handle new vital reading input
@@ -53,6 +53,35 @@ const PatientDashboard = () => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const checkAbnormalities = async () => {
+    const { bp, sugar } = newReading;
+    const highBP = bp > 140;
+    const lowBP = bp < 90;
+    const highSugar = sugar > 200;
+    const lowSugar = sugar < 70;
+
+    if (highBP || lowBP || highSugar || lowSugar) {
+      let alertMessage = `🚨 ALERT: Abnormal vital signs detected for ${patient.name}! \n`;
+
+      if (highBP) alertMessage += `High BP: ${bp} mmHg. `;
+      if (lowBP) alertMessage += `Low BP: ${bp} mmHg. `;
+      if (highSugar) alertMessage += `High Blood Sugar: ${sugar} mg/dL. `;
+      if (lowSugar) alertMessage += `Low Blood Sugar: ${sugar} mg/dL. `;
+
+      alertMessage += "Please check immediately.";
+
+      try {
+        const response = await axios.post('http://localhost:5000/api/send-notification', {
+            message: alertMessage
+        });
+
+        console.log("Notification sent:", response.data);
+      } catch (error) {
+        console.error("Error sending notification:", error.response ? error.response.data : error.message);
+      }
+    }
   };
 
   // Add a new vital reading
@@ -75,7 +104,7 @@ const PatientDashboard = () => {
       bp: [...prev.bp, bpEntry].sort((a, b) => new Date(a.date) - new Date(b.date)),
       sugar: [...prev.sugar, sugarEntry].sort((a, b) => new Date(a.date) - new Date(b.date))
     }));
-    
+    // checkAbnormalities();
     // Reset form
     setNewReading({
       date: '',
@@ -85,7 +114,7 @@ const PatientDashboard = () => {
   };
 
   const handleUpload = (e) => {
-    navigate('/analysis')
+    navigate("/loading")
   }
 
   // Handle file upload
@@ -197,17 +226,6 @@ const PatientDashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <div className="bg-gray-200 p-4 rounded-full text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-              </svg>
-            </div>
-            <div className="ml-4">
-              <h2 className="text-xl font-bold">{patient.doctor}</h2>
-              <p className="text-gray-600">Consulting Doctor</p>
-            </div>
-          </div>
         </div>
       </div>
 

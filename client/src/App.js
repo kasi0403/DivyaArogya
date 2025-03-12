@@ -4,20 +4,21 @@ import Header from './components/Header';
 import Home from './components/Home';
 import Login from './components/Login';
 import Form from './components/Form';
-import Profile from './components/Profile';
 import ChatBot from './components/ChatBot';
 import './App.css';
-import Admin from './components/Admin';
 import PatientList from './components/PatientsList';
 import ReportsList from './components/ReportsList';
 import Dashboard from './components/Dashboard'
-import ReportsDisplay from './components/ReportsDisplay';
 import PatientReport from './components/PatientReport'
 import GoogleTranslate from './components/GoogleTranslate';
 import ChatWidget from './components/ChatWidget';
 
+import Admin from './components/Admin';
+import MedicalLoadingComponent from './components/MedicalLoadingComponent';
+
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userID,setUserID] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,16 +42,12 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        {/* <Route path='/form' element={isLoggedIn && sessionStorage.getItem('userType') === 'Care Taker' ? <Form /> : <Home />} /> */}
-        <Route path='/reports' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' || sessionStorage.getItem('userType') ==='doctor')? <PatientList /> : <Home />} />
-        {/* <Route path='/dashboard/:userId/vitals' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' )? <VitalForm/> : <Home />} /> */}
-        <Route path='/dashboard/:userId' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' || sessionStorage.getItem('userType') ==='doctor')? <Dashboard/> : <Home />} />
+        <Route path='/Admin' element={isLoggedIn && sessionStorage.getItem('userType') === 'Admin' ? <Admin /> : <Home />} />
+        <Route path='/reports' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' || sessionStorage.getItem('userType') ==='doctor')? <PatientList setUserID={setUserID}/> : <Home />} />
+        <Route path="/dashboard/:userId" element={isLoggedIn && (sessionStorage.getItem("userType") === "Care Taker" || sessionStorage.getItem("userType") === "doctor") ? ( <Dashboard />) : ( <Home />)}/>
+        <Route path="/loading" element={<MedicalLoadingComponent/>}></Route>
         <Route path='/analysis' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' || sessionStorage.getItem('userType') ==='doctor')? <PatientReport/> : <Home />} />
-        {/* <Route path='/reportsList/:userId' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker'  || sessionStorage.getItem('userType') ==='doctor')? <ReportsList /> : <Home />} /> */}
-        <Route path='/report/:reportId' element={isLoggedIn && (sessionStorage.getItem('userType') === 'Care Taker' || sessionStorage.getItem('userType') ==='doctor') ? <ReportsDisplay/> : <Home />} />
-        <Route path='/profile' element={<Profile />} />
         <Route path='/chatbot' element={isLoggedIn && sessionStorage.getItem('userType') === 'doctor' ? <ChatBot /> : <Home />} />
-        <Route path='/Admin' element={isLoggedIn && sessionStorage.getItem('userType') === 'admin' ? <Admin /> : <Home />} />
       </Routes>
       <ChatWidget/>
     </div>
