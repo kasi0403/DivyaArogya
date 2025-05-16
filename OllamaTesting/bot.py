@@ -11,7 +11,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 app = Flask(__name__)
 
 # Initialize model and embeddings
-GOOGLE_API_KEY = "AIzaSyAOrJc0CyugZqXKXCAvZTFkTBKTqH5fq4A"
+GOOGLE_API_KEY = "API_KEY"
 model = ChatGoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY, temperature=0.2, convert_system_message_to_human=True)
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
 
